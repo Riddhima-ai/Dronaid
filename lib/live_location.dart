@@ -45,3 +45,5 @@ class _MapPageState extends State<MapPage> {
     );
   }
 }
+
+//location visible
