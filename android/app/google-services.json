@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "751288042998",
+    "project_id": "dronaid-325c8",
+    "storage_bucket": "dronaid-325c8.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:751288042998:android:235169293b89f7cf1eb3d7",
+        "android_client_info": {
+          "package_name": "com.example.live_loc"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBteaiHoFpwWoV1SWj0bCxJVQhJPU_27sA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
