@@ -16,10 +16,12 @@ class _MapPageState extends State<MapPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text("Drone Tracker")),
+      appBar: AppBar(title: const Text("Drone Tracker"),
+      backgroundColor: const Color.fromARGB(255, 157, 170, 193),),
       body: Padding(
       padding: const EdgeInsets.all(16.0),
       child: Container(
+        height: MediaQuery.of(context).size.height * 0.45,
       decoration: BoxDecoration(
       color:Colors.white,
       borderRadius:BorderRadius.circular(16),
