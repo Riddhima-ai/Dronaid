@@ -16,7 +16,8 @@ class _MapPageState extends State<MapPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text("Drone Tracker")),
+      appBar: AppBar(title: const Text("Drone Tracker"),
+      centerTitle: true,),
       body: Padding(
       padding: const EdgeInsets.all(16.0),
       child: Container(
