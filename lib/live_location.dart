@@ -15,15 +15,22 @@ class _MapPageState extends State<MapPage> {
   LatLng? dronelocation;
   LatLng? startpoint;
   LatLng? endpoint;
+  Timer? timer;
 
-  void simulateMovement() {
+void simulateMovement() {
   double lat = 12.9716;
   double lng = 77.5946;
 
-  Timer.periodic(Duration(seconds: 2), (timer) {
+  final double endLat = 12.9750;
+  final double endLng = 77.6000;
+
+  timer = Timer.periodic(Duration(seconds: 2), (t) {
+    
+    
     lat += 0.0005;
     lng += 0.0005;
 
+    
     FirebaseFirestore.instance
         .collection("drone_data")
         .doc("route")
@@ -31,10 +38,13 @@ class _MapPageState extends State<MapPage> {
       'currentLat': lat,
       'currentLng': lng,
     });
+
+    if ((lat >= endLat && lng >= endLng)) {
+      t.cancel(); // stop timer
+      print("Reached destination");
+    }
   });
 }
-
-  
 
   Future<void> createInitialData () async {
     final docref=FirebaseFirestore.instance.collection("drone_data").doc("route");
