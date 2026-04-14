@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'dart:async';
 
 class MapPage extends StatefulWidget {
   const MapPage({super.key});
@@ -14,6 +15,24 @@ class _MapPageState extends State<MapPage> {
   LatLng? dronelocation;
   LatLng? startpoint;
   LatLng? endpoint;
+
+  void simulateMovement() {
+  double lat = 12.9716;
+  double lng = 77.5946;
+
+  Timer.periodic(Duration(seconds: 2), (timer) {
+    lat += 0.0005;
+    lng += 0.0005;
+
+    FirebaseFirestore.instance
+        .collection("drone_data")
+        .doc("route")
+        .update({
+      'currentLat': lat,
+      'currentLng': lng,
+    });
+  });
+}
 
   
 
@@ -36,6 +55,7 @@ class _MapPageState extends State<MapPage> {
   void initState() {
     super.initState();
     createInitialData();
+    simulateMovement();
   }
 
   
@@ -126,8 +146,8 @@ class _MapPageState extends State<MapPage> {
                 polylines: [
                 Polyline(
                   points: [startPoint, endPoint],
-                  color: Colors.orange,
-                          strokeWidth: 4,
+                  color: Colors.blue,
+                          strokeWidth: 2,
                           )]
                           ),
           ],
@@ -140,4 +160,3 @@ class _MapPageState extends State<MapPage> {
   }
 }
 
-//location visible
