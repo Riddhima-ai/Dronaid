@@ -4,6 +4,7 @@ import 'package:latlong2/latlong.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'dart:async';
 
+
 class MapPage extends StatefulWidget {
   const MapPage({super.key});
 
@@ -16,21 +17,30 @@ class _MapPageState extends State<MapPage> {
   LatLng? startpoint;
   LatLng? endpoint;
   Timer? timer;
-
-void simulateMovement() {
+   final int totalSteps = 50;
+   final Duration stepInterval = const Duration(seconds: 1);
+    final double startLat = 12.9700;
+  final double startLng = 77.5900;
+   final double endLat = 12.9750;
+  final double endLng = 77.6000;
   double lat = 12.9716;
   double lng = 77.5946;
+    @override
+  
 
-  final double endLat = 12.9750;
-  final double endLng = 77.6000;
+void simulateMovement() {
+  int currentStep=0;
+  
 
   timer = Timer.periodic(Duration(seconds: 2), (t) {
-    
-    
-    lat += 0.0005;
-    lng += 0.0005;
-
-    
+   if(currentStep>totalSteps){
+    t.cancel();
+    print("Reached destination");
+        return;
+   }
+    double progress=currentStep/totalSteps;
+    double lat=startLat + (endLat - startLat) * progress;
+     double lng = startLng + (endLng - startLng) * progress;
     FirebaseFirestore.instance
         .collection("drone_data")
         .doc("route")
@@ -38,11 +48,12 @@ void simulateMovement() {
       'currentLat': lat,
       'currentLng': lng,
     });
+    currentStep++;
 
-    if ((lat >= endLat && lng >= endLng)) {
-      t.cancel(); // stop timer
-      print("Reached destination");
-    }
+    if (currentStep >= totalSteps) {
+  t.cancel();
+  print("Reached destination");
+}
   });
 }
 
@@ -51,24 +62,28 @@ void simulateMovement() {
     final doc= await docref.get();
     if(!doc.exists){
       await docref.set({
-        'currentLat': 12.9716,
-        'currentLng': 77.5946,
+        'currentLat': 12.9700,
+        'currentLng': 77.5900,
         'startLat': 12.9700,
         'startLng': 77.5900,
-        'endLat': 12.9750,
+       'endLat': 12.9750,
         'endLng': 77.6000,
       });
     }
 
   }
   @override
-  void initState() {
+  void initState(){
     super.initState();
     createInitialData();
     simulateMovement();
   }
 
-  
+  @override
+  void dispose(){
+    timer?.cancel();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -144,11 +159,11 @@ void simulateMovement() {
                 Marker(
                   point: startPoint, 
                   child: const Icon(Icons.location_on,
-                              color: Colors.green, size: 35),),
+                              color: Colors.green, size: 30),),
                 Marker(
                           point: endPoint,
                           child: const Icon(Icons.flag,
-                              color: Colors.blue, size: 35),
+                              color: Colors.blue, size: 30),
                         ),
               ]
               ),
