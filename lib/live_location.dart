@@ -75,14 +75,6 @@ showDialog(
             double lat = double.parse(latController.text);
             double lng = double.parse(lngController.text);
 
-            await FirebaseFirestore.instance
-                .collection("drone_data")
-                .doc("route")
-                .update({
-              'currentLat': lat,
-              'currentLng': lng,
-            });
-
             Navigator.pop(context);
           },
           child: const Text("Submit"),
@@ -99,7 +91,7 @@ void simulateMovement() {
 int currentStep=0;
 
 
-timer = Timer.periodic(Duration(seconds: 2), (t) {
+timer = Timer.periodic(Duration(milliseconds: 500), (t) {
   if(currentStep>totalSteps){
   t.cancel();
   print("Reached destination");
@@ -259,7 +251,7 @@ void initState(){
     ),
   ],
 ),
-);;}
+);}
     )
   );
 }
