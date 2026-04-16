@@ -3,7 +3,7 @@ import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'dart:async';
-
+import 'dart:math' as Math;
 
 class MapPage extends StatefulWidget {
 const MapPage({super.key});
@@ -13,12 +13,33 @@ State<MapPage> createState() => _MapPageState();
 }
 
 class _MapPageState extends State<MapPage> {
-LatLng? dronelocation;
-LatLng? startpoint;
-LatLng? endpoint;
-Timer? timer;
+  LatLng? dronelocation;
+  LatLng? startpoint;
+  LatLng? endpoint;
+  Timer? timer;
+   final int totalSteps = 50;
+   final Duration stepInterval = const Duration(seconds: 1);
+    final double startLat = 12.9700;
+  final double startLng = 77.5900;
+   final double endLat = 12.9750;
+  final double endLng = 77.6000;
+  double lat = 12.9716;
+  double lng = 77.5946;
+   double getAngle(LatLng start, LatLng end) {
+    double lat1 = start.latitude * Math.pi / 180;
+    double lat2 = end.latitude * Math.pi / 180;
+    double dLon = (end.longitude - start.longitude) * Math.pi / 180;
 
-final MapController _mapController = MapController();
+    double y = Math.sin(dLon) * Math.cos(lat2);
+    double x = Math.cos(lat1) * Math.sin(lat2) -
+        Math.sin(lat1) * Math.cos(lat2) * Math.cos(dLon);
+
+    return Math.atan2(y, x);
+  }
+
+    
+
+
 
 void showLatLngDialog(BuildContext context) {
 TextEditingController latController = TextEditingController();
@@ -71,15 +92,7 @@ showDialog(
   },
 );
 }
-final int totalSteps = 50;
-final Duration stepInterval = const Duration(seconds: 1);
-final double startLat = 12.9700;
-final double startLng = 77.5900;
-final double endLat = 12.9750;
-final double endLng = 77.6000;
-double lat = 12.9716;
-double lng = 77.5946;
-  @override
+
 
 
 void simulateMovement() {
@@ -133,48 +146,40 @@ void initState(){
   simulateMovement();
 }
 
-@override
-void dispose(){
-  timer?.cancel();
-  super.dispose();
-}
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: const Text("Drone Tracker"),
+      backgroundColor: const Color.fromARGB(255, 157, 170, 193),),
+      body: StreamBuilder<DocumentSnapshot>(
+        stream: FirebaseFirestore.instance
+        .collection("drone_data")
+        .doc("route")
+        .snapshots(),
+        builder: (context,snapshot){
+          if (!snapshot.hasData || !snapshot.data!.exists) {
+            return const Center(child: CircularProgressIndicator());
+          }
+          final data = snapshot.data!;
+          LatLng dronelocation = LatLng(
+          (data['currentLat'] ?? 0).toDouble(),
+          (data['currentLng'] ?? 0).toDouble(),
+         );
+          LatLng startPoint = LatLng(
+         (data['startLat'] ?? 0).toDouble(),
+         (data['startLng'] ?? 0).toDouble(),
+         );
 
-@override
-Widget build(BuildContext context) {
-  return Scaffold(
-    appBar: AppBar(title: const Text("Drone Tracker"),
-    backgroundColor: const Color.fromARGB(255, 157, 170, 193),),
-    body: StreamBuilder<DocumentSnapshot>(
-      stream: FirebaseFirestore.instance
-      .collection("drone_data")
-      .doc("route")
-      .snapshots(),
-      builder: (context,snapshot){
-        if (!snapshot.hasData || !snapshot.data!.exists) {
-          return const Center(child: CircularProgressIndicator());
-        }
-        final data = snapshot.data!;
-        LatLng dronelocation = LatLng(
-          data['currentLat'],
-          data['currentLng'],
-        );
-        LatLng startPoint = LatLng(
-          data['startLat'],
-          data['startLng'],
-        );
+         LatLng endPoint = LatLng(
+         (data['endLat'] ?? 0).toDouble(),
+         (data['endLng'] ?? 0).toDouble(),
+         );
+          double angle = getAngle(dronelocation, endPoint);
 
-        LatLng endPoint = LatLng(
-          data['endLat'],
-          data['endLng'],
-        );
-
-  return Padding(
-padding: const EdgeInsets.all(16.0),
-child: Column(
-  children: [
-    // MAP CONTAINER
-    Container(
-      height: MediaQuery.of(context).size.height * 0.45,
+        return Padding(
+      padding: const EdgeInsets.all(16.0),
+      child: Container(
+        height: MediaQuery.of(context).size.height * 0.45,
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(16),
@@ -203,8 +208,15 @@ child: Column(
               markers: [
                 Marker(
                   point: dronelocation,
-                  child: const Icon(Icons.navigation,
-                      color: Colors.red, size: 40),
+                  child: Transform.rotate(
+                    angle: angle,
+                    child: const Icon(
+                      Icons.navigation,
+                      color: Colors.red,
+                    size: 40,
+                    ),
+                    
+                  ),
                 ),
               ],
             ),
