@@ -3,7 +3,7 @@ import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'dart:async';
-
+import 'dart:math' as Math;
 
 class MapPage extends StatefulWidget {
   const MapPage({super.key});
@@ -25,6 +25,18 @@ class _MapPageState extends State<MapPage> {
   final double endLng = 77.6000;
   double lat = 12.9716;
   double lng = 77.5946;
+   double getAngle(LatLng start, LatLng end) {
+    double lat1 = start.latitude * Math.pi / 180;
+    double lat2 = end.latitude * Math.pi / 180;
+    double dLon = (end.longitude - start.longitude) * Math.pi / 180;
+
+    double y = Math.sin(dLon) * Math.cos(lat2);
+    double x = Math.cos(lat1) * Math.sin(lat2) -
+        Math.sin(lat1) * Math.cos(lat2) * Math.cos(dLon);
+
+    return Math.atan2(y, x);
+  }
+
     @override
   
 
@@ -101,18 +113,19 @@ void simulateMovement() {
           }
           final data = snapshot.data!;
           LatLng dronelocation = LatLng(
-            data['currentLat'],
-            data['currentLng'],
-          );
+          (data['currentLat'] ?? 0).toDouble(),
+          (data['currentLng'] ?? 0).toDouble(),
+         );
           LatLng startPoint = LatLng(
-            data['startLat'],
-            data['startLng'],
-          );
+         (data['startLat'] ?? 0).toDouble(),
+         (data['startLng'] ?? 0).toDouble(),
+         );
 
-          LatLng endPoint = LatLng(
-            data['endLat'],
-            data['endLng'],
-          );
+         LatLng endPoint = LatLng(
+         (data['endLat'] ?? 0).toDouble(),
+         (data['endLng'] ?? 0).toDouble(),
+         );
+          double angle = getAngle(dronelocation, endPoint);
 
         return Padding(
       padding: const EdgeInsets.all(16.0),
@@ -146,10 +159,14 @@ void simulateMovement() {
               markers: [
                 Marker(
                   point: dronelocation,
-                  child: const Icon(
-                    Icons.navigation,
-                    color: Colors.red,
+                  child: Transform.rotate(
+                    angle: angle,
+                    child: const Icon(
+                      Icons.navigation,
+                      color: Colors.red,
                     size: 40,
+                    ),
+                    
                   ),
                 ),
               ],
