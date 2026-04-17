@@ -170,7 +170,8 @@ void initState(){
 
         return Padding(
       padding: const EdgeInsets.all(16.0),
-      child: Container(
+      child: Column(
+       children:[Container(
         height: MediaQuery.of(context).size.height * 0.45,
       decoration: BoxDecoration(
         color: Colors.white,
@@ -205,7 +206,7 @@ void initState(){
                     child: const Icon(
                       Icons.navigation,
                       color: Colors.red,
-                    size: 40,
+                    size: 20,
                     ),
                     
                   ),
@@ -217,7 +218,7 @@ void initState(){
                 Marker(
                   point: startPoint,
                   child: const Icon(Icons.location_on,
-                      color: Colors.green, size: 30),
+                      color: Colors.green, size: 20),
                 ),
                 Marker(
                   point: endPoint,
@@ -238,7 +239,7 @@ void initState(){
           ],
         ),
       ),
-    ),
+     ),
 
     const SizedBox(height: 20),
 
@@ -249,11 +250,14 @@ void initState(){
       },
       child: const Text("Enter New Coordinates"),
     ),
-  ],
-),
-);}
+       ]
+      )    
+);
+
+}
     )
   );
 }
 }
+
 
