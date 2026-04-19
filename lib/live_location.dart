@@ -4,6 +4,7 @@ import 'package:latlong2/latlong.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'dart:async';
 import 'dart:math' as Math;
+import 'firebase_service.dart';
 
 class MapPage extends StatefulWidget {
   const MapPage({super.key});
@@ -25,6 +26,7 @@ class _MapPageState extends State<MapPage> {
   final double endLng = 77.6000;
   double lat = 12.9716;
   double lng = 77.5946;
+
   double getAngle(LatLng start, LatLng end) {
     double lat1 = start.latitude * Math.pi / 180;
     double lat2 = end.latitude * Math.pi / 180;
@@ -82,6 +84,8 @@ class _MapPageState extends State<MapPage> {
               onPressed: () async {
                 double lat = double.parse(latController.text);
                 double lng = double.parse(lngController.text);
+
+                await FirebaseService.addTargetPoint(lat, lng);
 
                 Navigator.pop(context);
               },
@@ -146,10 +150,10 @@ class _MapPageState extends State<MapPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Drone Tracker",
-        style: TextStyle(
-          color: Colors.white
-        ),),
+        title: const Text(
+          "Drone Tracker",
+          style: TextStyle(color: Colors.white),
+        ),
         backgroundColor: const Color.fromARGB(255, 41, 80, 172),
       ),
       body: StreamBuilder<DocumentSnapshot>(
@@ -161,11 +165,14 @@ class _MapPageState extends State<MapPage> {
           if (!snapshot.hasData || !snapshot.data!.exists) {
             return const Center(child: CircularProgressIndicator());
           }
+
           final data = snapshot.data!;
+
           LatLng dronelocation = LatLng(
             (data['currentLat'] ?? 0).toDouble(),
             (data['currentLng'] ?? 0).toDouble(),
           );
+
           LatLng startPoint = LatLng(
             (data['startLat'] ?? 0).toDouble(),
             (data['startLng'] ?? 0).toDouble(),
@@ -175,8 +182,10 @@ class _MapPageState extends State<MapPage> {
             (data['endLat'] ?? 0).toDouble(),
             (data['endLng'] ?? 0).toDouble(),
           );
+
           double angle = getAngle(dronelocation, endPoint);
           final dottedPoints = genertedots(dronelocation, endPoint, 20);
+
           return Padding(
             padding: const EdgeInsets.all(16.0),
             child: Column(
@@ -207,6 +216,8 @@ class _MapPageState extends State<MapPage> {
                               "https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}.png",
                           subdomains: const ['a', 'b', 'c', 'd'],
                         ),
+
+                        // Drone marker
                         MarkerLayer(
                           markers: [
                             Marker(
@@ -222,6 +233,8 @@ class _MapPageState extends State<MapPage> {
                             ),
                           ],
                         ),
+
+                        // Start & End markers
                         MarkerLayer(
                           markers: [
                             Marker(
@@ -242,6 +255,55 @@ class _MapPageState extends State<MapPage> {
                             ),
                           ],
                         ),
+
+                        // ✅ SINGLE TARGET POINT (FIXED)
+                        StreamBuilder<DocumentSnapshot>(
+                          stream: FirebaseFirestore.instance
+                              .collection("target_points")
+                              .doc("current")
+                              .snapshots(),
+                          builder: (context, snapshot) {
+                            if (!snapshot.hasData ||
+                                !snapshot.data!.exists) {
+                              return const SizedBox();
+                            }
+
+                            final data = snapshot.data!;
+                            final lat = (data['lat'] as num).toDouble();
+                            final lng = (data['lng'] as num).toDouble();
+
+                            return Stack(
+                              children: [
+                                PolylineLayer(
+                                  polylines: [
+                                    Polyline(
+                                      points: [
+                                        startPoint,
+                                        LatLng(lat, lng),
+                                      ],
+                                      color: Colors.purple,
+                                      strokeWidth: 2,
+                                    ),
+                                  ],
+                                ),
+                                MarkerLayer(
+                                  markers: [
+                                    Marker(
+                                      point: LatLng(lat, lng),
+                                      child: const Icon(
+                                        Icons.location_pin,
+                                        color: Colors.purple,
+                                        size: 25,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ],
+                            );
+                          },
+                        ),
+
+                        // Existing route
                         PolylineLayer(
                           polylines: [
                             Polyline(
@@ -274,20 +336,16 @@ class _MapPageState extends State<MapPage> {
 
                 Align(
                   alignment: Alignment.centerRight,
-                  child: Container(
-                    decoration: BoxDecoration(
-                      
+                  child: ElevatedButton(
+                    onPressed: () {
+                      showLatLngDialog(context);
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor:
+                          const Color.fromARGB(255, 41, 80, 172),
+                      foregroundColor: Colors.white,
                     ),
-                    child: ElevatedButton(
-                      onPressed: () {
-                        showLatLngDialog(context);
-                      },
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: const Color.fromARGB(255, 41, 80, 172),
-                        foregroundColor: Colors.white,
-                      ),
-                      child: const Text("+ Enter New Coordinates"),
-                    ),
+                    child: const Text("+ Enter New Coordinates"),
                   ),
                 ),
               ],
