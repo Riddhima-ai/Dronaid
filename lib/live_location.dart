@@ -14,12 +14,9 @@ class MapPage extends StatefulWidget {
 }
 
 class _MapPageState extends State<MapPage> {
-  LatLng? dronelocation;
-  LatLng? startpoint;
-  LatLng? endpoint;
   Timer? timer;
+
   final int totalSteps = 50;
-  final Duration stepInterval = const Duration(seconds: 1);
   final double startLat = 12.9700;
   final double startLng = 77.5900;
   final double endLat = 12.9750;
@@ -100,25 +97,22 @@ class _MapPageState extends State<MapPage> {
   void simulateMovement() {
     int currentStep = 0;
 
-    timer = Timer.periodic(Duration(milliseconds: 500), (t) {
+    timer = Timer.periodic(const Duration(milliseconds: 500), (t) {
       if (currentStep > totalSteps) {
         t.cancel();
-        print("Reached destination");
         return;
       }
+
       double progress = currentStep / totalSteps;
       double lat = startLat + (endLat - startLat) * progress;
       double lng = startLng + (endLng - startLng) * progress;
+
       FirebaseFirestore.instance.collection("drone_data").doc("route").update({
         'currentLat': lat,
         'currentLng': lng,
       });
-      currentStep++;
 
-      if (currentStep >= totalSteps) {
-        t.cancel();
-        print("Reached destination");
-      }
+      currentStep++;
     });
   }
 
@@ -127,14 +121,15 @@ class _MapPageState extends State<MapPage> {
         .collection("drone_data")
         .doc("route");
     final doc = await docref.get();
+
     if (!doc.exists) {
       await docref.set({
-        'currentLat': 12.9700,
-        'currentLng': 77.5900,
-        'startLat': 12.9700,
-        'startLng': 77.5900,
-        'endLat': 12.9750,
-        'endLng': 77.6000,
+        'currentLat': startLat,
+        'currentLng': startLng,
+        'startLat': startLat,
+        'startLng': startLng,
+        'endLat': endLat,
+        'endLng': endLng,
       });
     }
   }
@@ -154,6 +149,7 @@ class _MapPageState extends State<MapPage> {
           "Drone Tracker",
           style: TextStyle(color: Colors.white),
         ),
+        
         backgroundColor: const Color.fromARGB(255, 41, 80, 172),
       ),
       body: StreamBuilder<DocumentSnapshot>(
@@ -166,12 +162,15 @@ class _MapPageState extends State<MapPage> {
             return const Center(child: CircularProgressIndicator());
           }
 
+
           final data = snapshot.data!;
+
 
           LatLng dronelocation = LatLng(
             (data['currentLat'] ?? 0).toDouble(),
             (data['currentLng'] ?? 0).toDouble(),
           );
+
 
           LatLng startPoint = LatLng(
             (data['startLat'] ?? 0).toDouble(),
@@ -182,6 +181,7 @@ class _MapPageState extends State<MapPage> {
             (data['endLat'] ?? 0).toDouble(),
             (data['endLng'] ?? 0).toDouble(),
           );
+
 
           double angle = getAngle(dronelocation, endPoint);
           final dottedPoints = genertedots(dronelocation, endPoint, 20);
@@ -217,17 +217,29 @@ class _MapPageState extends State<MapPage> {
                           subdomains: const ['a', 'b', 'c', 'd'],
                         ),
 
-                        // Drone marker
+                        // DRONE
                         MarkerLayer(
                           markers: [
                             Marker(
                               point: dronelocation,
-                              child: Transform.rotate(
-                                angle: angle,
-                                child: const Icon(
-                                  Icons.navigation,
-                                  color: Colors.red,
-                                  size: 20,
+                              child: Container(
+                                decoration: BoxDecoration(
+                                  shape: BoxShape.circle,
+                                  boxShadow: [
+                                    BoxShadow(
+                                      color: Colors.red.withOpacity(0.7),
+                                      blurRadius: 12,
+                                      spreadRadius: 3,
+                                    ),
+                                  ],
+                                ),
+                                child: Transform.rotate(
+                                  angle: angle,
+                                  child: const Icon(
+                                    Icons.navigation,
+                                    color: Colors.red,
+                                    size: 25,
+                                  ),
                                 ),
                               ),
                             ),
@@ -241,17 +253,19 @@ class _MapPageState extends State<MapPage> {
                               point: startPoint,
                               child: const Icon(
                                 Icons.location_on,
-                                color: Colors.green,
-                                size: 20,
+                                color: Color.fromRGBO(80, 155, 220, 1.0),
+                                size: 28,
                               ),
                             ),
                             Marker(
                               point: endPoint,
-                              child: const Icon(
-                                Icons.flag,
-                                color: Colors.blue,
-                                size: 30,
-                              ),
+                              
+                                child: const Icon(
+                                  Icons.flag,
+                                  color: Colors.blue,
+                                  size: 30,
+                                ),
+                              
                             ),
                           ],
                         ),
@@ -318,7 +332,7 @@ class _MapPageState extends State<MapPage> {
                                     dottedPoints[i],
                                     dottedPoints[i + 1],
                                   ],
-                                  color: Colors.blue.withOpacity(0.5),
+                                  color: Colors.blueGrey.withOpacity(0.7),
                                   strokeWidth: 3,
                                 );
                               } else {
