@@ -17,33 +17,16 @@ class _MapPageState extends State<MapPage> {
 
   List<LatLng> pathPoints = [];
 
-  double getAngle(LatLng start, LatLng end) {
-    double lat1 = start.latitude * Math.pi / 180;
-    double lat2 = end.latitude * Math.pi / 180;
-    double dLon = (end.longitude - start.longitude) * Math.pi / 180;
+  LatLng droneLocation = const LatLng(12.9716, 77.5946);
 
-    double y = Math.sin(dLon) * Math.cos(lat2);
-    double x =
-        Math.cos(lat1) * Math.sin(lat2) -
-        Math.sin(lat1) * Math.cos(lat2) * Math.cos(dLon);
+  double altitude = 0.0; // ✅ NEW
 
-    return Math.atan2(y, x);
-  }
+  final List<LatLng> _pathHistory = [];
 
-  List<LatLng> genertedots(LatLng start, LatLng end, int segments) {
-    List<LatLng> points = [];
-    for (int i = 0; i <= segments; i++) {
-      double t = i / segments;
-      double lat = start.latitude + (end.latitude - start.latitude) * t;
-      double lng = start.longitude + (end.longitude - start.longitude) * t;
-      points.add(LatLng(lat, lng));
-    }
-    return points;
-  }
 
-  void showLatLngDialog(BuildContext context) {
-    TextEditingController latController = TextEditingController();
-    TextEditingController lngController = TextEditingController();
+  void _listenToRealtimeLocation() {
+    _ref.onValue.listen((DatabaseEvent event) {
+      if (event.snapshot.value == null) return;
 
     showDialog(
       context: context,
@@ -164,7 +147,7 @@ double altitude = double.tryParse(
                         
                       ],
                     ),
-                  ),
+                  ],
                 ),
                 SizedBox(height: 16),
 
@@ -197,8 +180,8 @@ Container(
 ),
               ],
             ),
-          );
-        },
+          ],
+        ),
       ),
     );
   }
