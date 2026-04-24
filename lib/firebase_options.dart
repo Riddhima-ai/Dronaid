@@ -41,52 +41,54 @@ class DefaultFirebaseOptions {
   }
 
   static const FirebaseOptions web = FirebaseOptions(
-    apiKey: 'AIzaSyBDNoPCZwIILItxyQWedyuQwJobEEHEieY',
-    appId: '1:23640679370:web:944d8f2b30b411501fe533',
-    messagingSenderId: '23640679370',
-    projectId: 'test-mavlink',
-    authDomain: 'test-mavlink.firebaseapp.com',
-    databaseURL: 'https://test-mavlink-default-rtdb.asia-southeast1.firebasedatabase.app',
-    storageBucket: 'test-mavlink.firebasestorage.app',
+    apiKey: 'AIzaSyBV1IAIfb7EtLVKxP4t3xEY1CCcJHOvGPo',
+    appId: '1:171193895763:web:abb7329ccd811a398a2fa6',
+    messagingSenderId: '171193895763',
+    projectId: 'uas2026-b3b43',
+    authDomain: 'uas2026-b3b43.firebaseapp.com',
+    databaseURL: 'https://uas2026-b3b43-default-rtdb.europe-west1.firebasedatabase.app',
+    storageBucket: 'uas2026-b3b43.firebasestorage.app',
+    measurementId: 'G-ZY44E3NFXB',
   );
 
   static const FirebaseOptions android = FirebaseOptions(
-    apiKey: 'AIzaSyCYbMPLL9UkjluNjKgtOM4aV7UTHlz4zbQ',
-    appId: '1:23640679370:android:27c5f6c25200d6d81fe533',
-    messagingSenderId: '23640679370',
-    projectId: 'test-mavlink',
-    databaseURL: 'https://test-mavlink-default-rtdb.asia-southeast1.firebasedatabase.app',
-    storageBucket: 'test-mavlink.firebasestorage.app',
+    apiKey: 'AIzaSyD2M2QQ1eUfTIzh6d0RWAy3sLisJjpL_Y4',
+    appId: '1:171193895763:android:6ddf4053d5943ca78a2fa6',
+    messagingSenderId: '171193895763',
+    projectId: 'uas2026-b3b43',
+    databaseURL: 'https://uas2026-b3b43-default-rtdb.europe-west1.firebasedatabase.app',
+    storageBucket: 'uas2026-b3b43.firebasestorage.app',
   );
 
   static const FirebaseOptions ios = FirebaseOptions(
-    apiKey: 'AIzaSyCXBW1BXdJ5E5l_8uYWJGdCaxD8xGjaEDk',
-    appId: '1:23640679370:ios:adcaf7f3cfbca0be1fe533',
-    messagingSenderId: '23640679370',
-    projectId: 'test-mavlink',
-    databaseURL: 'https://test-mavlink-default-rtdb.asia-southeast1.firebasedatabase.app',
-    storageBucket: 'test-mavlink.firebasestorage.app',
+    apiKey: 'AIzaSyCqlGYOh2ZOBkoB034XgPKzgn4-d4nrMsY',
+    appId: '1:171193895763:ios:6989d4cac8129a508a2fa6',
+    messagingSenderId: '171193895763',
+    projectId: 'uas2026-b3b43',
+    databaseURL: 'https://uas2026-b3b43-default-rtdb.europe-west1.firebasedatabase.app',
+    storageBucket: 'uas2026-b3b43.firebasestorage.app',
     iosBundleId: 'com.example.liveLoc',
   );
 
   static const FirebaseOptions macos = FirebaseOptions(
-    apiKey: 'AIzaSyCXBW1BXdJ5E5l_8uYWJGdCaxD8xGjaEDk',
-    appId: '1:23640679370:ios:adcaf7f3cfbca0be1fe533',
-    messagingSenderId: '23640679370',
-    projectId: 'test-mavlink',
-    databaseURL: 'https://test-mavlink-default-rtdb.asia-southeast1.firebasedatabase.app',
-    storageBucket: 'test-mavlink.firebasestorage.app',
+    apiKey: 'AIzaSyCqlGYOh2ZOBkoB034XgPKzgn4-d4nrMsY',
+    appId: '1:171193895763:ios:6989d4cac8129a508a2fa6',
+    messagingSenderId: '171193895763',
+    projectId: 'uas2026-b3b43',
+    databaseURL: 'https://uas2026-b3b43-default-rtdb.europe-west1.firebasedatabase.app',
+    storageBucket: 'uas2026-b3b43.firebasestorage.app',
     iosBundleId: 'com.example.liveLoc',
   );
 
   static const FirebaseOptions windows = FirebaseOptions(
-    apiKey: 'AIzaSyBDNoPCZwIILItxyQWedyuQwJobEEHEieY',
-    appId: '1:23640679370:web:8c8adee928fb47aa1fe533',
-    messagingSenderId: '23640679370',
-    projectId: 'test-mavlink',
-    authDomain: 'test-mavlink.firebaseapp.com',
-    databaseURL: 'https://test-mavlink-default-rtdb.asia-southeast1.firebasedatabase.app',
-    storageBucket: 'test-mavlink.firebasestorage.app',
+    apiKey: 'AIzaSyBV1IAIfb7EtLVKxP4t3xEY1CCcJHOvGPo',
+    appId: '1:171193895763:web:c42f30d06966c1c98a2fa6',
+    messagingSenderId: '171193895763',
+    projectId: 'uas2026-b3b43',
+    authDomain: 'uas2026-b3b43.firebaseapp.com',
+    databaseURL: 'https://uas2026-b3b43-default-rtdb.europe-west1.firebasedatabase.app',
+    storageBucket: 'uas2026-b3b43.firebasestorage.app',
+    measurementId: 'G-MTY744XZD7',
   );
 
 }

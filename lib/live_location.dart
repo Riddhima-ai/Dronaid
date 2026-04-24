@@ -1,10 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'dart:async';
-import 'dart:math' as Math;
-import 'firebase_service.dart';
+import 'package:firebase_database/firebase_database.dart';
+import 'firebase_options.dart';
 
 class MapPage extends StatefulWidget {
   const MapPage({super.key});
@@ -14,131 +12,52 @@ class MapPage extends StatefulWidget {
 }
 
 class _MapPageState extends State<MapPage> {
-  Timer? timer;
+  final DatabaseReference _ref = FirebaseDatabase.instance.ref("telemetry");
 
-  final int totalSteps = 50;
-  final double startLat = 12.9700;
-  final double startLng = 77.5900;
-  final double endLat = 12.9750;
-  final double endLng = 77.6000;
-  double lat = 12.9716;
-  double lng = 77.5946;
+  LatLng droneLocation = const LatLng(12.9716, 77.5946);
 
-  double getAngle(LatLng start, LatLng end) {
-    double lat1 = start.latitude * Math.pi / 180;
-    double lat2 = end.latitude * Math.pi / 180;
-    double dLon = (end.longitude - start.longitude) * Math.pi / 180;
+  double altitude = 0.0; // ✅ NEW
 
-    double y = Math.sin(dLon) * Math.cos(lat2);
-    double x =
-        Math.cos(lat1) * Math.sin(lat2) -
-        Math.sin(lat1) * Math.cos(lat2) * Math.cos(dLon);
+  final List<LatLng> _pathHistory = [];
 
-    return Math.atan2(y, x);
-  }
+  void _listenToRealtimeLocation() {
+    _ref.onValue.listen((DatabaseEvent event) {
+      if (event.snapshot.value == null) return;
 
-  List<LatLng> genertedots(LatLng start, LatLng end, int segments) {
-    List<LatLng> points = [];
-    for (int i = 0; i <= segments; i++) {
-      double t = i / segments;
-      double lat = start.latitude + (end.latitude - start.latitude) * t;
-      double lng = start.longitude + (end.longitude - start.longitude) * t;
-      points.add(LatLng(lat, lng));
-    }
-    return points;
-  }
+      final data = event.snapshot.value as Map<dynamic, dynamic>;
 
-  void showLatLngDialog(BuildContext context) {
-    TextEditingController latController = TextEditingController();
-    TextEditingController lngController = TextEditingController();
+      final double lat = (data['lat'] as num).toDouble();
+      final double lng = (data['lon'] as num).toDouble();
 
-    showDialog(
-      context: context,
-      builder: (context) {
-        return AlertDialog(
-          title: const Text("Enter Coordinates"),
-          content: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              TextField(
-                controller: latController,
-                keyboardType: TextInputType.number,
-                decoration: const InputDecoration(labelText: "Latitude"),
-              ),
-              TextField(
-                controller: lngController,
-                keyboardType: TextInputType.number,
-                decoration: const InputDecoration(labelText: "Longitude"),
-              ),
-            ],
-          ),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.pop(context),
-              child: const Text("Cancel"),
-            ),
-            ElevatedButton(
-              onPressed: () async {
-                double lat = double.parse(latController.text);
-                double lng = double.parse(lngController.text);
+      final double alt = (data['alt'] ?? 0) is num
+          ? (data['alt'] as num).toDouble()
+          : 0.0;
 
-                await FirebaseService.addTargetPoint(lat, lng);
+      if (lat == 0.0 && lng == 0.0) return;
 
-                Navigator.pop(context);
-              },
-              child: const Text("Submit"),
-            ),
-          ],
-        );
-      },
-    );
-  }
+      final LatLng newPoint = LatLng(lat, lng);
 
-  void simulateMovement() {
-    int currentStep = 0;
+      setState(() {
+        droneLocation = newPoint;
+        altitude = alt;
 
-    timer = Timer.periodic(const Duration(milliseconds: 500), (t) {
-      if (currentStep > totalSteps) {
-        t.cancel();
-        return;
-      }
+        if (_pathHistory.isEmpty ||
+            _pathHistory.last.latitude != lat ||
+            _pathHistory.last.longitude != lng) {
+          _pathHistory.add(newPoint);
+        }
 
-      double progress = currentStep / totalSteps;
-      double lat = startLat + (endLat - startLat) * progress;
-      double lng = startLng + (endLng - startLng) * progress;
-
-      FirebaseFirestore.instance.collection("drone_data").doc("route").update({
-        'currentLat': lat,
-        'currentLng': lng,
+        if (_pathHistory.length > 500) {
+          _pathHistory.removeAt(0);
+        }
       });
-
-      currentStep++;
     });
-  }
-
-  Future<void> createInitialData() async {
-    final docref = FirebaseFirestore.instance
-        .collection("drone_data")
-        .doc("route");
-    final doc = await docref.get();
-
-    if (!doc.exists) {
-      await docref.set({
-        'currentLat': startLat,
-        'currentLng': startLng,
-        'startLat': startLat,
-        'startLng': startLng,
-        'endLat': endLat,
-        'endLng': endLng,
-      });
-    }
   }
 
   @override
   void initState() {
     super.initState();
-    createInitialData();
-    simulateMovement();
+    _listenToRealtimeLocation();
   }
 
   @override
@@ -149,209 +68,80 @@ class _MapPageState extends State<MapPage> {
           "Drone Tracker",
           style: TextStyle(color: Colors.white),
         ),
-
         backgroundColor: const Color.fromARGB(255, 41, 80, 172),
       ),
-      body: StreamBuilder<DocumentSnapshot>(
-        stream: FirebaseFirestore.instance
-            .collection("drone_data")
-            .doc("route")
-            .snapshots(),
-        builder: (context, snapshot) {
-          if (!snapshot.hasData || !snapshot.data!.exists) {
-            return const Center(child: CircularProgressIndicator());
-          }
-
-          final data = snapshot.data!;
-
-          LatLng dronelocation = LatLng(
-            (data['currentLat'] ?? 0).toDouble(),
-            (data['currentLng'] ?? 0).toDouble(),
-          );
-
-          LatLng startPoint = LatLng(
-            (data['startLat'] ?? 0).toDouble(),
-            (data['startLng'] ?? 0).toDouble(),
-          );
-
-          LatLng endPoint = LatLng(
-            (data['endLat'] ?? 0).toDouble(),
-            (data['endLng'] ?? 0).toDouble(),
-          );
-
-          double angle = getAngle(dronelocation, endPoint);
-          final dottedPoints = genertedots(dronelocation, endPoint, 20);
-
-          return Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: Column(
-              children: [
-                Container(
-                  height: MediaQuery.of(context).size.height * 0.45,
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(16),
-                    boxShadow: const [
-                      BoxShadow(
-                        color: Colors.black26,
-                        blurRadius: 10,
-                        offset: Offset(0, 4),
-                      ),
-                    ],
+      body: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          children: [
+            Container(
+              height: MediaQuery.of(context).size.height * 0.45,
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(16),
+                boxShadow: const [
+                  BoxShadow(
+                    color: Colors.black26,
+                    blurRadius: 10,
+                    offset: Offset(0, 4),
                   ),
-                  child: ClipRRect(
-                    borderRadius: BorderRadius.circular(16),
-                    child: FlutterMap(
-                      options: MapOptions(
-                        initialCenter: startPoint,
-                        initialZoom: 15,
+                ],
+              ),
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(16),
+                child: FlutterMap(
+                  options: MapOptions(
+                    initialCenter: droneLocation,
+                    initialZoom: 15,
+                  ),
+                  children: [
+                    TileLayer(
+                      urlTemplate:
+                          "https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}.png",
+                      subdomains: const ['a', 'b', 'c', 'd'],
+                    ),
+
+                    if (_pathHistory.length >= 2)
+                      PolylineLayer(
+                        polylines: [
+                          Polyline(
+                            points: List.from(_pathHistory),
+                            color: Colors.blue,
+                            strokeWidth: 3.5,
+                          ),
+                        ],
                       ),
-                      children: [
-                        TileLayer(
-                          urlTemplate:
-                              "https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}.png",
-                          subdomains: const ['a', 'b', 'c', 'd'],
-                        ),
 
-                        MarkerLayer(
-                          markers: [
-                            Marker(
-                              point: dronelocation,
-                              child: Container(
-                                decoration: BoxDecoration(
-                                  shape: BoxShape.circle,
-                                  boxShadow: [
-                                    BoxShadow(
-                                      color: Colors.red.withOpacity(0.7),
-                                      blurRadius: 12,
-                                      spreadRadius: 3,
-                                    ),
-                                  ],
-                                ),
-                                child: Transform.rotate(
-                                  angle: angle,
-                                  child: const Icon(
-                                    Icons.navigation,
-                                    color: Colors.red,
-                                    size: 25,
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-
-                        MarkerLayer(
-                          markers: [
-                            Marker(
-                              point: startPoint,
-                              child: const Icon(
-                                Icons.location_on,
-                                color: Color.fromRGBO(80, 155, 220, 1.0),
-                                size: 28,
-                              ),
-                            ),
-                            Marker(
-                              point: endPoint,
-
-                              child: const Icon(
-                                Icons.flag,
-                                color: Colors.blue,
-                                size: 30,
-                              ),
-                            ),
-                          ],
-                        ),
-
-                        StreamBuilder<DocumentSnapshot>(
-                          stream: FirebaseFirestore.instance
-                              .collection("target_points")
-                              .doc("current")
-                              .snapshots(),
-                          builder: (context, snapshot) {
-                            if (!snapshot.hasData || !snapshot.data!.exists) {
-                              return const SizedBox();
-                            }
-
-                            final data = snapshot.data!;
-                            final lat = (data['lat'] as num).toDouble();
-                            final lng = (data['lng'] as num).toDouble();
-
-                            return Stack(
-                              children: [
-                                PolylineLayer(
-                                  polylines: [
-                                    Polyline(
-                                      points: [startPoint, LatLng(lat, lng)],
-                                      color: Colors.purple,
-                                      strokeWidth: 2,
-                                    ),
-                                  ],
-                                ),
-                                MarkerLayer(
-                                  markers: [
-                                    Marker(
-                                      point: LatLng(lat, lng),
-                                      child: const Icon(
-                                        Icons.location_pin,
-                                        color: Colors.purple,
-                                        size: 25,
-                                      ),
-                                    ),
-                                  ],
+                    MarkerLayer(
+                      markers: [
+                        Marker(
+                          point: droneLocation,
+                          child: Container(
+                            decoration: BoxDecoration(
+                              shape: BoxShape.circle,
+                              boxShadow: [
+                                BoxShadow(
+                                  color: Colors.red.withOpacity(0.6),
+                                  blurRadius: 12,
+                                  spreadRadius: 3,
                                 ),
                               ],
-                            );
-                          },
-                        ),
-
-                        PolylineLayer(
-                          polylines: [
-                            Polyline(
-                              points: [startPoint, dronelocation],
-                              color: Colors.blue,
-                              strokeWidth: 2,
                             ),
-                            ...List.generate(dottedPoints.length - 1, (i) {
-                              if (i % 2 == 0) {
-                                return Polyline(
-                                  points: [
-                                    dottedPoints[i],
-                                    dottedPoints[i + 1],
-                                  ],
-                                  color: Colors.blueGrey.withOpacity(0.7),
-                                  strokeWidth: 3,
-                                );
-                              } else {
-                                return null;
-                              }
-                            }).whereType<Polyline>().toList(),
-                          ],
+                            child: const Icon(
+                              Icons.navigation,
+                              color: Colors.red,
+                              size: 25,
+                            ),
+                          ),
                         ),
                       ],
                     ),
-                  ),
+                  ],
                 ),
-
-                const SizedBox(height: 20),
-
-                Align(
-                  alignment: Alignment.centerRight,
-                  child: ElevatedButton(
-                    onPressed: () {
-                      showLatLngDialog(context);
-                    },
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: const Color.fromARGB(255, 41, 80, 172),
-                      foregroundColor: Colors.white,
-                    ),
-                    child: const Text("+ Enter New Coordinates"),
-                  ),
-                ),
-              ],
+              ),
             ),
-          );
-        },
+          ],
+        ),
       ),
     );
   }

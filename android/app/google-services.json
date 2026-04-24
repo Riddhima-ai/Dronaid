@@ -1,14 +1,14 @@
 {
   "project_info": {
-    "project_number": "23640679370",
-    "firebase_url": "https://test-mavlink-default-rtdb.asia-southeast1.firebasedatabase.app",
-    "project_id": "test-mavlink",
-    "storage_bucket": "test-mavlink.firebasestorage.app"
+    "project_number": "171193895763",
+    "firebase_url": "https://uas2026-b3b43-default-rtdb.europe-west1.firebasedatabase.app",
+    "project_id": "uas2026-b3b43",
+    "storage_bucket": "uas2026-b3b43.firebasestorage.app"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:23640679370:android:27c5f6c25200d6d81fe533",
+        "mobilesdk_app_id": "1:171193895763:android:6ddf4053d5943ca78a2fa6",
         "android_client_info": {
           "package_name": "com.example.live_loc"
         }
@@ -16,7 +16,7 @@
       "oauth_client": [],
       "api_key": [
         {
-          "current_key": "AIzaSyCYbMPLL9UkjluNjKgtOM4aV7UTHlz4zbQ"
+          "current_key": "AIzaSyD2M2QQ1eUfTIzh6d0RWAy3sLisJjpL_Y4"
         }
       ],
       "services": {
