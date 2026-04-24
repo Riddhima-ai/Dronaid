@@ -30,9 +30,9 @@ class _MapPageState extends State<MapPage> {
     return points;
   }
 
-  void showLatLngDialog(BuildContext context) {
-    TextEditingController latController = TextEditingController();
-    TextEditingController lngController = TextEditingController();
+  void _listenToRealtimeLocation() {
+    _ref.onValue.listen((DatabaseEvent event) {
+      if (event.snapshot.value == null) return;
 
     showDialog(
       context: context,
@@ -259,8 +259,8 @@ Container(
 ),
               ],
             ),
-          );
-        },
+          ],
+        ),
       ),
     );
   }
