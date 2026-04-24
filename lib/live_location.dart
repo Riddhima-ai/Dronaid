@@ -16,7 +16,7 @@ class _MapPageState extends State<MapPage> {
 
   LatLng droneLocation = const LatLng(12.9716, 77.5946);
 
-  double altitude = 0.0; // ✅ NEW
+  double altitude = 0.0;
 
   final List<LatLng> _pathHistory = [];
 
@@ -138,6 +138,35 @@ class _MapPageState extends State<MapPage> {
                     ),
                   ],
                 ),
+              ),
+            ),
+            const SizedBox(height: 16),
+
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(10),
+                boxShadow: const [
+                  BoxShadow(color: Colors.black12, blurRadius: 6),
+                ],
+              ),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    "Lat: ${droneLocation.latitude.toStringAsFixed(5)}",
+                    style: const TextStyle(fontSize: 13),
+                  ),
+                  Text(
+                    "Lng: ${droneLocation.longitude.toStringAsFixed(5)}",
+                    style: const TextStyle(fontSize: 13),
+                  ),
+                  Text(
+                    "Alt: ${altitude.toStringAsFixed(2)} m",
+                    style: const TextStyle(fontSize: 13),
+                  ),
+                ],
               ),
             ),
           ],
