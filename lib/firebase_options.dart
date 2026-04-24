@@ -41,46 +41,54 @@ class DefaultFirebaseOptions {
   }
 
   static const FirebaseOptions web = FirebaseOptions(
-    apiKey: 'AIzaSyAD0PZ0CZ869BJnwUMH89r8L7MMScDIJkw',
-    appId: '1:751288042998:web:c6cd9657c6460a3a1eb3d7',
-    messagingSenderId: '751288042998',
-    projectId: 'dronaid-325c8',
-    authDomain: 'dronaid-325c8.firebaseapp.com',
-    storageBucket: 'dronaid-325c8.firebasestorage.app',
+    apiKey: 'AIzaSyBV1IAIfb7EtLVKxP4t3xEY1CCcJHOvGPo',
+    appId: '1:171193895763:web:abb7329ccd811a398a2fa6',
+    messagingSenderId: '171193895763',
+    projectId: 'uas2026-b3b43',
+    authDomain: 'uas2026-b3b43.firebaseapp.com',
+    databaseURL: 'https://uas2026-b3b43-default-rtdb.europe-west1.firebasedatabase.app',
+    storageBucket: 'uas2026-b3b43.firebasestorage.app',
+    measurementId: 'G-ZY44E3NFXB',
   );
 
   static const FirebaseOptions android = FirebaseOptions(
-    apiKey: 'AIzaSyBteaiHoFpwWoV1SWj0bCxJVQhJPU_27sA',
-    appId: '1:751288042998:android:235169293b89f7cf1eb3d7',
-    messagingSenderId: '751288042998',
-    projectId: 'dronaid-325c8',
-    storageBucket: 'dronaid-325c8.firebasestorage.app',
+    apiKey: 'AIzaSyD2M2QQ1eUfTIzh6d0RWAy3sLisJjpL_Y4',
+    appId: '1:171193895763:android:6ddf4053d5943ca78a2fa6',
+    messagingSenderId: '171193895763',
+    projectId: 'uas2026-b3b43',
+    databaseURL: 'https://uas2026-b3b43-default-rtdb.europe-west1.firebasedatabase.app',
+    storageBucket: 'uas2026-b3b43.firebasestorage.app',
   );
 
   static const FirebaseOptions ios = FirebaseOptions(
-    apiKey: 'AIzaSyCfzsfo66OcuuEfrOuqSuXsK3SdbziKP1Q',
-    appId: '1:751288042998:ios:7b22463617fa99ff1eb3d7',
-    messagingSenderId: '751288042998',
-    projectId: 'dronaid-325c8',
-    storageBucket: 'dronaid-325c8.firebasestorage.app',
+    apiKey: 'AIzaSyCqlGYOh2ZOBkoB034XgPKzgn4-d4nrMsY',
+    appId: '1:171193895763:ios:6989d4cac8129a508a2fa6',
+    messagingSenderId: '171193895763',
+    projectId: 'uas2026-b3b43',
+    databaseURL: 'https://uas2026-b3b43-default-rtdb.europe-west1.firebasedatabase.app',
+    storageBucket: 'uas2026-b3b43.firebasestorage.app',
     iosBundleId: 'com.example.liveLoc',
   );
 
   static const FirebaseOptions macos = FirebaseOptions(
-    apiKey: 'AIzaSyCfzsfo66OcuuEfrOuqSuXsK3SdbziKP1Q',
-    appId: '1:751288042998:ios:7b22463617fa99ff1eb3d7',
-    messagingSenderId: '751288042998',
-    projectId: 'dronaid-325c8',
-    storageBucket: 'dronaid-325c8.firebasestorage.app',
+    apiKey: 'AIzaSyCqlGYOh2ZOBkoB034XgPKzgn4-d4nrMsY',
+    appId: '1:171193895763:ios:6989d4cac8129a508a2fa6',
+    messagingSenderId: '171193895763',
+    projectId: 'uas2026-b3b43',
+    databaseURL: 'https://uas2026-b3b43-default-rtdb.europe-west1.firebasedatabase.app',
+    storageBucket: 'uas2026-b3b43.firebasestorage.app',
     iosBundleId: 'com.example.liveLoc',
   );
 
   static const FirebaseOptions windows = FirebaseOptions(
-    apiKey: 'AIzaSyAD0PZ0CZ869BJnwUMH89r8L7MMScDIJkw',
-    appId: '1:751288042998:web:dc27094c5709af1c1eb3d7',
-    messagingSenderId: '751288042998',
-    projectId: 'dronaid-325c8',
-    authDomain: 'dronaid-325c8.firebaseapp.com',
-    storageBucket: 'dronaid-325c8.firebasestorage.app',
+    apiKey: 'AIzaSyBV1IAIfb7EtLVKxP4t3xEY1CCcJHOvGPo',
+    appId: '1:171193895763:web:c42f30d06966c1c98a2fa6',
+    messagingSenderId: '171193895763',
+    projectId: 'uas2026-b3b43',
+    authDomain: 'uas2026-b3b43.firebaseapp.com',
+    databaseURL: 'https://uas2026-b3b43-default-rtdb.europe-west1.firebasedatabase.app',
+    storageBucket: 'uas2026-b3b43.firebasestorage.app',
+    measurementId: 'G-MTY744XZD7',
   );
+
 }
