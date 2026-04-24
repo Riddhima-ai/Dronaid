@@ -13,6 +13,7 @@ class MapPage extends StatefulWidget {
 }
 
 class _MapPageState extends State<MapPage> {
+  
    final MapController _mapController = MapController();
   final dbref = FirebaseDatabase.instance.ref("telemetry");
 
@@ -30,9 +31,9 @@ class _MapPageState extends State<MapPage> {
     return points;
   }
 
-  void _listenToRealtimeLocation() {
-    _ref.onValue.listen((DatabaseEvent event) {
-      if (event.snapshot.value == null) return;
+  void showLatLngDialog(BuildContext context) {
+    TextEditingController latController = TextEditingController();
+    TextEditingController lngController = TextEditingController();
 
     showDialog(
       context: context,
@@ -107,12 +108,19 @@ double headingRad = heading * (Math.pi / 180);
   _mapController.move(droneLocation, 15);
 });
 
-          if (pathPoints.isEmpty ||
-              pathPoints.last.latitude != droneLocation.latitude ||
-              pathPoints.last.longitude != droneLocation.longitude) {
-            pathPoints.add(droneLocation);
-          }
+          if (latitude != 0 && longitude != 0) {
 
+  if (pathPoints.isEmpty) {
+    // first valid point → start here
+    pathPoints.add(droneLocation);
+
+  } else if (
+    pathPoints.last.latitude != droneLocation.latitude ||
+    pathPoints.last.longitude != droneLocation.longitude
+  ) {
+    pathPoints.add(droneLocation);
+  }
+}
           LatLng startPoint =
               pathPoints.isNotEmpty ? pathPoints.first : droneLocation;
 
@@ -147,6 +155,16 @@ double headingRad = heading * (Math.pi / 180);
                               "https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}.png",
                           subdomains: const ['a', 'b', 'c', 'd'],
                         ),
+                        if (pathPoints.length > 1)
+  PolylineLayer(
+    polylines: [
+      Polyline(
+        points: pathPoints,
+        strokeWidth: 4,
+        color: Colors.blue,
+      ),
+    ],
+  ),
                         MarkerLayer(
                           markers: [
                             Marker(
@@ -259,8 +277,8 @@ Container(
 ),
               ],
             ),
-          ],
-        ),
+          );
+        },
       ),
     );
   }
