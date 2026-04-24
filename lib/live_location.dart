@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'dart:async';
+import 'package:firebase_database/firebase_database.dart';
 import 'dart:math' as Math;
 import 'firebase_service.dart';
 
@@ -14,15 +13,9 @@ class MapPage extends StatefulWidget {
 }
 
 class _MapPageState extends State<MapPage> {
-  Timer? timer;
+  final dbref = FirebaseDatabase.instance.ref("telemetry");
 
-  final int totalSteps = 50;
-  final double startLat = 12.9700;
-  final double startLng = 77.5900;
-  final double endLat = 12.9750;
-  final double endLng = 77.6000;
-  double lat = 12.9716;
-  double lng = 77.5946;
+  List<LatLng> pathPoints = [];
 
   double getAngle(LatLng start, LatLng end) {
     double lat1 = start.latitude * Math.pi / 180;
@@ -81,9 +74,7 @@ class _MapPageState extends State<MapPage> {
               onPressed: () async {
                 double lat = double.parse(latController.text);
                 double lng = double.parse(lngController.text);
-
                 await FirebaseService.addTargetPoint(lat, lng);
-
                 Navigator.pop(context);
               },
               child: const Text("Submit"),
@@ -94,53 +85,6 @@ class _MapPageState extends State<MapPage> {
     );
   }
 
-  void simulateMovement() {
-    int currentStep = 0;
-
-    timer = Timer.periodic(const Duration(milliseconds: 500), (t) {
-      if (currentStep > totalSteps) {
-        t.cancel();
-        return;
-      }
-
-      double progress = currentStep / totalSteps;
-      double lat = startLat + (endLat - startLat) * progress;
-      double lng = startLng + (endLng - startLng) * progress;
-
-      FirebaseFirestore.instance.collection("drone_data").doc("route").update({
-        'currentLat': lat,
-        'currentLng': lng,
-      });
-
-      currentStep++;
-    });
-  }
-
-  Future<void> createInitialData() async {
-    final docref = FirebaseFirestore.instance
-        .collection("drone_data")
-        .doc("route");
-    final doc = await docref.get();
-
-    if (!doc.exists) {
-      await docref.set({
-        'currentLat': startLat,
-        'currentLng': startLng,
-        'startLat': startLat,
-        'startLng': startLng,
-        'endLat': endLat,
-        'endLng': endLng,
-      });
-    }
-  }
-
-  @override
-  void initState() {
-    super.initState();
-    createInitialData();
-    simulateMovement();
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -149,42 +93,30 @@ class _MapPageState extends State<MapPage> {
           "Drone Tracker",
           style: TextStyle(color: Colors.white),
         ),
-        
-        backgroundColor: const Color.fromARGB(255, 41, 80, 172),
+        backgroundColor: const Color.fromARGB(255, 18, 37, 83),
       ),
-      body: StreamBuilder<DocumentSnapshot>(
-        stream: FirebaseFirestore.instance
-            .collection("drone_data")
-            .doc("route")
-            .snapshots(),
+      body: StreamBuilder<DatabaseEvent>(
+        stream: dbref.onValue,
         builder: (context, snapshot) {
-          if (!snapshot.hasData || !snapshot.data!.exists) {
-            return const Center(child: CircularProgressIndicator());
+          print(snapshot.data?.snapshot.value);
+          final raw = snapshot.data?.snapshot.value;
+final data = raw is Map ? Map<String, dynamic>.from(raw) : null;
+double altitude = double.tryParse(
+  data?['alt_ft']?.toString() ?? "0"
+) ?? 0;
+          LatLng droneLocation = LatLng(
+            (data?['lat'] ?? 0).toDouble(),
+            (data?['lon'] ?? 0).toDouble(),
+          );
+
+          if (pathPoints.isEmpty ||
+              pathPoints.last.latitude != droneLocation.latitude ||
+              pathPoints.last.longitude != droneLocation.longitude) {
+            pathPoints.add(droneLocation);
           }
 
-
-          final data = snapshot.data!;
-
-
-          LatLng dronelocation = LatLng(
-            (data['currentLat'] ?? 0).toDouble(),
-            (data['currentLng'] ?? 0).toDouble(),
-          );
-
-
-          LatLng startPoint = LatLng(
-            (data['startLat'] ?? 0).toDouble(),
-            (data['startLng'] ?? 0).toDouble(),
-          );
-
-          LatLng endPoint = LatLng(
-            (data['endLat'] ?? 0).toDouble(),
-            (data['endLng'] ?? 0).toDouble(),
-          );
-
-
-          double angle = getAngle(dronelocation, endPoint);
-          final dottedPoints = genertedots(dronelocation, endPoint, 20);
+          LatLng startPoint =
+              pathPoints.isNotEmpty ? pathPoints.first : droneLocation;
 
           return Padding(
             padding: const EdgeInsets.all(16.0),
@@ -216,152 +148,53 @@ class _MapPageState extends State<MapPage> {
                               "https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}.png",
                           subdomains: const ['a', 'b', 'c', 'd'],
                         ),
-
-                        // DRONE
                         MarkerLayer(
                           markers: [
                             Marker(
-                              point: dronelocation,
-                              child: Container(
-                                decoration: BoxDecoration(
-                                  shape: BoxShape.circle,
-                                  boxShadow: [
-                                    BoxShadow(
-                                      color: Colors.red.withOpacity(0.7),
-                                      blurRadius: 12,
-                                      spreadRadius: 3,
-                                    ),
-                                  ],
-                                ),
-                                child: Transform.rotate(
-                                  angle: angle,
-                                  child: const Icon(
-                                    Icons.navigation,
-                                    color: Colors.red,
-                                    size: 25,
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-
-                        // Start & End markers
-                        MarkerLayer(
-                          markers: [
-                            Marker(
-                              point: startPoint,
+                              point: droneLocation,
                               child: const Icon(
-                                Icons.location_on,
-                                color: Color.fromRGBO(80, 155, 220, 1.0),
-                                size: 28,
+                                Icons.navigation,
+                                color: Colors.red,
+                                size: 30,
                               ),
                             ),
-                            Marker(
-                              point: endPoint,
-                              
-                                child: const Icon(
-                                  Icons.flag,
-                                  color: Colors.blue,
-                                  size: 30,
-                                ),
-                              
-                            ),
                           ],
                         ),
-
-                        // ✅ SINGLE TARGET POINT (FIXED)
-                        StreamBuilder<DocumentSnapshot>(
-                          stream: FirebaseFirestore.instance
-                              .collection("target_points")
-                              .doc("current")
-                              .snapshots(),
-                          builder: (context, snapshot) {
-                            if (!snapshot.hasData ||
-                                !snapshot.data!.exists) {
-                              return const SizedBox();
-                            }
-
-                            final data = snapshot.data!;
-                            final lat = (data['lat'] as num).toDouble();
-                            final lng = (data['lng'] as num).toDouble();
-
-                            return Stack(
-                              children: [
-                                PolylineLayer(
-                                  polylines: [
-                                    Polyline(
-                                      points: [
-                                        startPoint,
-                                        LatLng(lat, lng),
-                                      ],
-                                      color: Colors.purple,
-                                      strokeWidth: 2,
-                                    ),
-                                  ],
-                                ),
-                                MarkerLayer(
-                                  markers: [
-                                    Marker(
-                                      point: LatLng(lat, lng),
-                                      child: const Icon(
-                                        Icons.location_pin,
-                                        color: Colors.purple,
-                                        size: 25,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ],
-                            );
-                          },
-                        ),
-
-                        // Existing route
-                        PolylineLayer(
-                          polylines: [
-                            Polyline(
-                              points: [startPoint, dronelocation],
-                              color: Colors.blue,
-                              strokeWidth: 2,
-                            ),
-                            ...List.generate(dottedPoints.length - 1, (i) {
-                              if (i % 2 == 0) {
-                                return Polyline(
-                                  points: [
-                                    dottedPoints[i],
-                                    dottedPoints[i + 1],
-                                  ],
-                                  color: Colors.blueGrey.withOpacity(0.7),
-                                  strokeWidth: 3,
-                                );
-                              } else {
-                                return null;
-                              }
-                            }).whereType<Polyline>().toList(),
-                          ],
-                        ),
+                        
+                        
                       ],
                     ),
                   ),
                 ),
+                SizedBox(height: 16),
 
-                const SizedBox(height: 20),
-
-                Align(
-                  alignment: Alignment.centerRight,
-                  child: ElevatedButton(
-                    onPressed: () {
-                      showLatLngDialog(context);
-                    },
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor:
-                          const Color.fromARGB(255, 41, 80, 172),
-                      foregroundColor: Colors.white,
-                    ),
-                    child: const Text("+ Enter New Coordinates"),
-                  ),
-                ),
+Container(
+  padding: EdgeInsets.all(12),
+  decoration: BoxDecoration(
+    color: Colors.white,
+    borderRadius: BorderRadius.circular(12),
+    boxShadow: [
+      BoxShadow(
+        color: Colors.black26,
+        blurRadius: 6,
+        offset: Offset(0, 3),
+      ),
+    ],
+  ),
+  child: Row(
+    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+    children: [
+      Text(
+        "Altitude",
+        style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+      ),
+      Text(
+        "${altitude.toStringAsFixed(2)} ft",
+        style: TextStyle(fontSize: 16),
+      ),
+    ],
+  ),
+),
               ],
             ),
           );
