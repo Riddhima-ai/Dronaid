@@ -149,7 +149,7 @@ class _MapPageState extends State<MapPage> {
           "Drone Tracker",
           style: TextStyle(color: Colors.white),
         ),
-        
+
         backgroundColor: const Color.fromARGB(255, 41, 80, 172),
       ),
       body: StreamBuilder<DocumentSnapshot>(
@@ -162,15 +162,12 @@ class _MapPageState extends State<MapPage> {
             return const Center(child: CircularProgressIndicator());
           }
 
-
           final data = snapshot.data!;
-
 
           LatLng dronelocation = LatLng(
             (data['currentLat'] ?? 0).toDouble(),
             (data['currentLng'] ?? 0).toDouble(),
           );
-
 
           LatLng startPoint = LatLng(
             (data['startLat'] ?? 0).toDouble(),
@@ -181,7 +178,6 @@ class _MapPageState extends State<MapPage> {
             (data['endLat'] ?? 0).toDouble(),
             (data['endLng'] ?? 0).toDouble(),
           );
-
 
           double angle = getAngle(dronelocation, endPoint);
           final dottedPoints = genertedots(dronelocation, endPoint, 20);
@@ -217,7 +213,6 @@ class _MapPageState extends State<MapPage> {
                           subdomains: const ['a', 'b', 'c', 'd'],
                         ),
 
-                        // DRONE
                         MarkerLayer(
                           markers: [
                             Marker(
@@ -246,7 +241,6 @@ class _MapPageState extends State<MapPage> {
                           ],
                         ),
 
-                        // Start & End markers
                         MarkerLayer(
                           markers: [
                             Marker(
@@ -259,26 +253,23 @@ class _MapPageState extends State<MapPage> {
                             ),
                             Marker(
                               point: endPoint,
-                              
-                                child: const Icon(
-                                  Icons.flag,
-                                  color: Colors.blue,
-                                  size: 30,
-                                ),
-                              
+
+                              child: const Icon(
+                                Icons.flag,
+                                color: Colors.blue,
+                                size: 30,
+                              ),
                             ),
                           ],
                         ),
 
-                        // ✅ SINGLE TARGET POINT (FIXED)
                         StreamBuilder<DocumentSnapshot>(
                           stream: FirebaseFirestore.instance
                               .collection("target_points")
                               .doc("current")
                               .snapshots(),
                           builder: (context, snapshot) {
-                            if (!snapshot.hasData ||
-                                !snapshot.data!.exists) {
+                            if (!snapshot.hasData || !snapshot.data!.exists) {
                               return const SizedBox();
                             }
 
@@ -291,10 +282,7 @@ class _MapPageState extends State<MapPage> {
                                 PolylineLayer(
                                   polylines: [
                                     Polyline(
-                                      points: [
-                                        startPoint,
-                                        LatLng(lat, lng),
-                                      ],
+                                      points: [startPoint, LatLng(lat, lng)],
                                       color: Colors.purple,
                                       strokeWidth: 2,
                                     ),
@@ -317,7 +305,6 @@ class _MapPageState extends State<MapPage> {
                           },
                         ),
 
-                        // Existing route
                         PolylineLayer(
                           polylines: [
                             Polyline(
@@ -355,8 +342,7 @@ class _MapPageState extends State<MapPage> {
                       showLatLngDialog(context);
                     },
                     style: ElevatedButton.styleFrom(
-                      backgroundColor:
-                          const Color.fromARGB(255, 41, 80, 172),
+                      backgroundColor: const Color.fromARGB(255, 41, 80, 172),
                       foregroundColor: Colors.white,
                     ),
                     child: const Text("+ Enter New Coordinates"),

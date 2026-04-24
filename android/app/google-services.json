@@ -1,13 +1,14 @@
 {
   "project_info": {
-    "project_number": "751288042998",
-    "project_id": "dronaid-325c8",
-    "storage_bucket": "dronaid-325c8.firebasestorage.app"
+    "project_number": "23640679370",
+    "firebase_url": "https://test-mavlink-default-rtdb.asia-southeast1.firebasedatabase.app",
+    "project_id": "test-mavlink",
+    "storage_bucket": "test-mavlink.firebasestorage.app"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:751288042998:android:235169293b89f7cf1eb3d7",
+        "mobilesdk_app_id": "1:23640679370:android:27c5f6c25200d6d81fe533",
         "android_client_info": {
           "package_name": "com.example.live_loc"
         }
@@ -15,7 +16,7 @@
       "oauth_client": [],
       "api_key": [
         {
-          "current_key": "AIzaSyBteaiHoFpwWoV1SWj0bCxJVQhJPU_27sA"
+          "current_key": "AIzaSyCYbMPLL9UkjluNjKgtOM4aV7UTHlz4zbQ"
         }
       ],
       "services": {

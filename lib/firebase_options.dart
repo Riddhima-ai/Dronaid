@@ -41,46 +41,52 @@ class DefaultFirebaseOptions {
   }
 
   static const FirebaseOptions web = FirebaseOptions(
-    apiKey: 'AIzaSyAD0PZ0CZ869BJnwUMH89r8L7MMScDIJkw',
-    appId: '1:751288042998:web:c6cd9657c6460a3a1eb3d7',
-    messagingSenderId: '751288042998',
-    projectId: 'dronaid-325c8',
-    authDomain: 'dronaid-325c8.firebaseapp.com',
-    storageBucket: 'dronaid-325c8.firebasestorage.app',
+    apiKey: 'AIzaSyBDNoPCZwIILItxyQWedyuQwJobEEHEieY',
+    appId: '1:23640679370:web:944d8f2b30b411501fe533',
+    messagingSenderId: '23640679370',
+    projectId: 'test-mavlink',
+    authDomain: 'test-mavlink.firebaseapp.com',
+    databaseURL: 'https://test-mavlink-default-rtdb.asia-southeast1.firebasedatabase.app',
+    storageBucket: 'test-mavlink.firebasestorage.app',
   );
 
   static const FirebaseOptions android = FirebaseOptions(
-    apiKey: 'AIzaSyBteaiHoFpwWoV1SWj0bCxJVQhJPU_27sA',
-    appId: '1:751288042998:android:235169293b89f7cf1eb3d7',
-    messagingSenderId: '751288042998',
-    projectId: 'dronaid-325c8',
-    storageBucket: 'dronaid-325c8.firebasestorage.app',
+    apiKey: 'AIzaSyCYbMPLL9UkjluNjKgtOM4aV7UTHlz4zbQ',
+    appId: '1:23640679370:android:27c5f6c25200d6d81fe533',
+    messagingSenderId: '23640679370',
+    projectId: 'test-mavlink',
+    databaseURL: 'https://test-mavlink-default-rtdb.asia-southeast1.firebasedatabase.app',
+    storageBucket: 'test-mavlink.firebasestorage.app',
   );
 
   static const FirebaseOptions ios = FirebaseOptions(
-    apiKey: 'AIzaSyCfzsfo66OcuuEfrOuqSuXsK3SdbziKP1Q',
-    appId: '1:751288042998:ios:7b22463617fa99ff1eb3d7',
-    messagingSenderId: '751288042998',
-    projectId: 'dronaid-325c8',
-    storageBucket: 'dronaid-325c8.firebasestorage.app',
+    apiKey: 'AIzaSyCXBW1BXdJ5E5l_8uYWJGdCaxD8xGjaEDk',
+    appId: '1:23640679370:ios:adcaf7f3cfbca0be1fe533',
+    messagingSenderId: '23640679370',
+    projectId: 'test-mavlink',
+    databaseURL: 'https://test-mavlink-default-rtdb.asia-southeast1.firebasedatabase.app',
+    storageBucket: 'test-mavlink.firebasestorage.app',
     iosBundleId: 'com.example.liveLoc',
   );
 
   static const FirebaseOptions macos = FirebaseOptions(
-    apiKey: 'AIzaSyCfzsfo66OcuuEfrOuqSuXsK3SdbziKP1Q',
-    appId: '1:751288042998:ios:7b22463617fa99ff1eb3d7',
-    messagingSenderId: '751288042998',
-    projectId: 'dronaid-325c8',
-    storageBucket: 'dronaid-325c8.firebasestorage.app',
+    apiKey: 'AIzaSyCXBW1BXdJ5E5l_8uYWJGdCaxD8xGjaEDk',
+    appId: '1:23640679370:ios:adcaf7f3cfbca0be1fe533',
+    messagingSenderId: '23640679370',
+    projectId: 'test-mavlink',
+    databaseURL: 'https://test-mavlink-default-rtdb.asia-southeast1.firebasedatabase.app',
+    storageBucket: 'test-mavlink.firebasestorage.app',
     iosBundleId: 'com.example.liveLoc',
   );
 
   static const FirebaseOptions windows = FirebaseOptions(
-    apiKey: 'AIzaSyAD0PZ0CZ869BJnwUMH89r8L7MMScDIJkw',
-    appId: '1:751288042998:web:dc27094c5709af1c1eb3d7',
-    messagingSenderId: '751288042998',
-    projectId: 'dronaid-325c8',
-    authDomain: 'dronaid-325c8.firebaseapp.com',
-    storageBucket: 'dronaid-325c8.firebasestorage.app',
+    apiKey: 'AIzaSyBDNoPCZwIILItxyQWedyuQwJobEEHEieY',
+    appId: '1:23640679370:web:8c8adee928fb47aa1fe533',
+    messagingSenderId: '23640679370',
+    projectId: 'test-mavlink',
+    authDomain: 'test-mavlink.firebaseapp.com',
+    databaseURL: 'https://test-mavlink-default-rtdb.asia-southeast1.firebasedatabase.app',
+    storageBucket: 'test-mavlink.firebasestorage.app',
   );
+
 }
