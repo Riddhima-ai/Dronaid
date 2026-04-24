@@ -18,19 +18,7 @@ class _MapPageState extends State<MapPage> {
 
   List<LatLng> pathPoints = [];
 
-  double getAngle(LatLng start, LatLng end) {
-    double lat1 = start.latitude * Math.pi / 180;
-    double lat2 = end.latitude * Math.pi / 180;
-    double dLon = (end.longitude - start.longitude) * Math.pi / 180;
-
-    double y = Math.sin(dLon) * Math.cos(lat2);
-    double x =
-        Math.cos(lat1) * Math.sin(lat2) -
-        Math.sin(lat1) * Math.cos(lat2) * Math.cos(dLon);
-
-    return Math.atan2(y, x);
-  }
-
+  
   List<LatLng> genertedots(LatLng start, LatLng end, int segments) {
     List<LatLng> points = [];
     for (int i = 0; i <= segments; i++) {
@@ -111,6 +99,10 @@ double longitude = (data?['lng'] ?? 0).toDouble();
             (data?['lat'] ?? 0).toDouble(),
             (data?['lng'] ?? 0).toDouble(),
           );
+          double heading = double.tryParse(
+  data?['heading']?.toString() ?? "0"
+) ?? 0;
+double headingRad = heading * (Math.pi / 180);
           WidgetsBinding.instance.addPostFrameCallback((_) {
   _mapController.move(droneLocation, 15);
 });
@@ -159,10 +151,15 @@ double longitude = (data?['lng'] ?? 0).toDouble();
                           markers: [
                             Marker(
                               point: droneLocation,
-                              child: const Icon(
-                                Icons.navigation,
-                                color: Colors.red,
-                                size: 30,
+                              
+                              child: Transform.rotate(
+                                angle: headingRad,
+                                child: const Icon(
+                                  Icons.navigation,
+                                  
+                                  color: Colors.red,
+                                  size: 30,
+                                ),
                               ),
                             ),
                           ],
