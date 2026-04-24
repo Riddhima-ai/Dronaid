@@ -13,6 +13,7 @@ class MapPage extends StatefulWidget {
 }
 
 class _MapPageState extends State<MapPage> {
+   final MapController _mapController = MapController();
   final dbref = FirebaseDatabase.instance.ref("telemetry");
 
   List<LatLng> pathPoints = [];
@@ -104,10 +105,15 @@ final data = raw is Map ? Map<String, dynamic>.from(raw) : null;
 double altitude = double.tryParse(
   data?['alt_ft']?.toString() ?? "0"
 ) ?? 0;
+double latitude = (data?['lat'] ?? 0).toDouble();
+double longitude = (data?['lng'] ?? 0).toDouble();
           LatLng droneLocation = LatLng(
             (data?['lat'] ?? 0).toDouble(),
-            (data?['lon'] ?? 0).toDouble(),
+            (data?['lng'] ?? 0).toDouble(),
           );
+          WidgetsBinding.instance.addPostFrameCallback((_) {
+  _mapController.move(droneLocation, 15);
+});
 
           if (pathPoints.isEmpty ||
               pathPoints.last.latitude != droneLocation.latitude ||
@@ -138,6 +144,7 @@ double altitude = double.tryParse(
                   child: ClipRRect(
                     borderRadius: BorderRadius.circular(16),
                     child: FlutterMap(
+                      mapController: _mapController,
                       options: MapOptions(
                         initialCenter: startPoint,
                         initialZoom: 15,
@@ -165,7 +172,65 @@ double altitude = double.tryParse(
                       ],
                     ),
                   ),
-                ),
+                ),SizedBox(height: 12),
+
+Container(
+  padding: EdgeInsets.all(12),
+  decoration: BoxDecoration(
+    color: Colors.white,
+    borderRadius: BorderRadius.circular(12),
+    boxShadow: [
+      BoxShadow(
+        color: Colors.black26,
+        blurRadius: 6,
+        offset: Offset(0, 3),
+      ),
+    ],
+  ),
+  child: Row(
+    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+    children: [
+      Text(
+        "Latitude",
+        style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+      ),
+      Text(
+        latitude.toStringAsFixed(7),
+        style: TextStyle(fontSize: 16),
+      ),
+    ],
+  ),
+),
+
+SizedBox(height: 12),
+
+Container(
+  padding: EdgeInsets.all(12),
+  decoration: BoxDecoration(
+    color: Colors.white,
+    borderRadius: BorderRadius.circular(12),
+    boxShadow: [
+      BoxShadow(
+        color: Colors.black26,
+        blurRadius: 6,
+        offset: Offset(0, 3),
+      ),
+    ],
+  ),
+  child: Row(
+    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+    children: [
+      Text(
+        "Longitude",
+        style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+      ),
+      Text(
+        longitude.toStringAsFixed(7),
+        style: TextStyle(fontSize: 16),
+      ),
+    ],
+  ),
+),
                 SizedBox(height: 16),
 
 Container(
