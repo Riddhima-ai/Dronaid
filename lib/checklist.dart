@@ -192,22 +192,24 @@ class _ElectronicsChecklistPageState
 
     return Scaffold(
 
-      backgroundColor: Colors.grey[100],
+      backgroundColor: const Color.fromARGB(255, 245, 245, 245),
 
       appBar: AppBar(
-        title: const Text("Electronics Checklist"),
+        title: const Text("Electronics Checklist",style: TextStyle(color: Colors.white),),
         centerTitle: true,
-
+        backgroundColor:  const Color.fromARGB(255, 18, 37, 83),
         actions: [
 
           IconButton(
             icon: const Icon(Icons.done_all),
             onPressed: markAllComplete,
+            color: Colors.white,
           ),
 
           IconButton(
             icon: const Icon(Icons.refresh),
             onPressed: resetChecklist,
+            color: Colors.white,
           ),
         ],
       ),
@@ -221,7 +223,7 @@ class _ElectronicsChecklistPageState
             padding: const EdgeInsets.all(16),
 
             decoration: BoxDecoration(
-              color: Colors.white,
+              color: const Color.fromARGB(255, 99, 114, 165),
               borderRadius: BorderRadius.circular(16),
 
               boxShadow: [
@@ -300,7 +302,7 @@ class _ElectronicsChecklistPageState
 
                         value: item.checked,
 
-                        activeColor: Colors.green,
+                        activeColor: const Color.fromARGB(255, 65, 44, 188),
 
                         title: Text(
 
@@ -336,11 +338,11 @@ class _ElectronicsChecklistPageState
 
       floatingActionButton: FloatingActionButton.extended(
 
-        backgroundColor: Colors.green,
+        backgroundColor:const Color.fromARGB(255, 99, 114, 165),
 
-        icon: const Icon(Icons.check),
+        icon: const Icon(Icons.check,color: Colors.white,),
 
-        label: const Text("Finish"),
+        label: const Text("Finish",style: TextStyle(color: Colors.white),),
 
         onPressed: () {
 
