@@ -94,8 +94,17 @@ final data = raw is Map ? Map<String, dynamic>.from(raw) : null;
 double altitude = double.tryParse(
   data?['alt_ft']?.toString() ?? "0"
 ) ?? 0;
+
+double airspeed = double.tryParse(
+  data?['airspeed_kts']?.toString() ?? "0"
+) ?? 0;
+
+double groundspeed = double.tryParse(
+  data?['groundspeed_kts']?.toString() ?? "0"
+) ?? 0;
 double latitude = (data?['lat'] ?? 0).toDouble();
 double longitude = (data?['lng'] ?? 0).toDouble();
+
           LatLng droneLocation = LatLng(
             (data?['lat'] ?? 0).toDouble(),
             (data?['lng'] ?? 0).toDouble(),
@@ -270,6 +279,66 @@ Container(
       ),
       Text(
         "${altitude.toStringAsFixed(2)} ft",
+        style: TextStyle(fontSize: 16),
+      ),
+    ],
+  ),
+),
+SizedBox(height: 12),
+
+// 🚀 AIRSPEED CARD
+Container(
+  padding: EdgeInsets.all(12),
+  decoration: BoxDecoration(
+    color: Colors.white,
+    borderRadius: BorderRadius.circular(12),
+    boxShadow: [
+      BoxShadow(
+        color: Colors.black26,
+        blurRadius: 6,
+        offset: Offset(0, 3),
+      ),
+    ],
+  ),
+  child: Row(
+    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+    children: [
+      Text(
+        "Airspeed",
+        style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+      ),
+      Text(
+        "${airspeed.toStringAsFixed(2)} kts",
+        style: TextStyle(fontSize: 16),
+      ),
+    ],
+  ),
+),
+SizedBox(height: 12),
+
+// 🚀 GROUNDSPEED CARD
+Container(
+  padding: EdgeInsets.all(12),
+  decoration: BoxDecoration(
+    color: Colors.white,
+    borderRadius: BorderRadius.circular(12),
+    boxShadow: [
+      BoxShadow(
+        color: Colors.black26,
+        blurRadius: 6,
+        offset: Offset(0, 3),
+      ),
+    ],
+  ),
+  child: Row(
+    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+    children: [
+      Text(
+        "Groundspeed",
+        style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+      ),
+      Text(
+        "${groundspeed.toStringAsFixed(2)} kts",
         style: TextStyle(fontSize: 16),
       ),
     ],
