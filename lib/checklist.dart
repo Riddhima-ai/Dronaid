@@ -32,113 +32,75 @@ class ElectronicsChecklistPage extends StatefulWidget {
 class _ElectronicsChecklistPageState
     extends State<ElectronicsChecklistPage> {
 
-  final List<ChecklistSection> sections = [
+  
 
-    ChecklistSection(
-      title: "POWER SYSTEM CHECKS",
-      items: [
-        ChecklistItem(title: "Both batteries charged to full and balanced"),
-        ChecklistItem(title: "No swelling or physical damage in batteries"),
-        ChecklistItem(title: "All XT60 and XT90 connections are tight"),
-        ChecklistItem(
-            title: "Voltage and current reading accurate in mission planner"),
-        ChecklistItem(title: "No overheating in PM07"),
-        ChecklistItem(title: "FC powered correctly from PM07"),
-        ChecklistItem(title: "BEC output checked using multimeter"),
-        ChecklistItem(title: "Backup power checked"),
-      ],
-    ),
+   final List<ChecklistSection> sections = [
 
-    ChecklistSection(
-      title: "FLIGHT CONTROLLER CHECKS",
-      items: [
-        ChecklistItem(title: "CUAV X7+ boots without errors"),
-        ChecklistItem(title: "All ports in FC working"),
-        ChecklistItem(title: "SD card logging enabled"),
-        ChecklistItem(title: "Vibration isolation mounted properly"),
-        ChecklistItem(title: "FC orientation correct in software"),
-        ChecklistItem(title: "Calibrations performed"),
-      ],
-    ),
+  ChecklistSection(
+    title: "PRE - ASSEMBLY",
+    items: [
+      ChecklistItem(title: "Battery Level - 100%"),
+      ChecklistItem(title: "Battery Connected"),
+      ChecklistItem(title: "Safety Loop Connected"),
+      ChecklistItem(title: "Compass Calibrated"),
+      ChecklistItem(title: "Safety Loop Disconnected"),
+    ],
+  ),
 
-    ChecklistSection(
-      title: "FIRMWARE CHECKS",
-      items: [
-        ChecklistItem(title: "Parameters saved and backed up"),
-        ChecklistItem(title: "Flight modes configured"),
-        ChecklistItem(title: "Failsafe parameters verified"),
-      ],
-    ),
+  ChecklistSection(
+    title: "ASSEMBLY",
+    items: [
+      ChecklistItem(title: "Wing Box Attached and Locked"),
+      ChecklistItem(title: "Forward Landing Gear Attached"),
+      ChecklistItem(title: "Tail Booms Attached"),
+      ChecklistItem(title: "Tail Section Attached"),
+      ChecklistItem(title: "Control Surface JS Connected"),
+      ChecklistItem(title: "Back Hatch Locked"),
+      ChecklistItem(title: "Parachute Installed"),
+    ],
+  ),
 
-    ChecklistSection(
-      title: "COMMUNICATION CHECKS",
-      items: [
-        ChecklistItem(title: "Radiomaster TX12 bound correctly"),
-        ChecklistItem(title: "Receiver power stable"),
-        ChecklistItem(title: "All channels mapped correctly"),
-        ChecklistItem(title: "RSSI strong"),
-        ChecklistItem(title: "Telemetry link established"),
-        ChecklistItem(title: "Data updating in ground station"),
-        ChecklistItem(title: "Antenna properly oriented"),
-      ],
-    ),
+  ChecklistSection(
+    title: "GCS",
+    items: [
+      ChecklistItem(title: "Safety Loop Connected"),
+      ChecklistItem(title: "Mission Planner Connected"),
+      ChecklistItem(title: "App Initialised"),
+      ChecklistItem(title: "Air Speed Sensor Calibrated"),
+    ],
+  ),
 
-    ChecklistSection(
-      title: "SENSOR AND NAVIGATION",
-      items: [
-        ChecklistItem(title: "SAT count above 10"),
-        ChecklistItem(title: "GPS mounted away from noise sources"),
-        ChecklistItem(title: "No magnetic interference"),
-        ChecklistItem(title: "Airspeed sensor tube facing forward"),
-        ChecklistItem(title: "No blockage to airspeed sensor"),
-        ChecklistItem(title: "Airspeed sensor calibrated"),
-      ],
-    ),
+  ChecklistSection(
+    title: "PAYLOAD",
+    items: [
+      ChecklistItem(title: "Valve Closed"),
+      ChecklistItem(title: "Payload (Water) Filled"),
+      ChecklistItem(title: "Container Attached"),
+      ChecklistItem(title: "Valve Open"),
+      ChecklistItem(title: "Air Speed Sensor Filled"),
+    ],
+  ),
 
-    ChecklistSection(
-      title: "CONTROL SURFACES",
-      items: [
-        ChecklistItem(
-            title: "Ailerons moving correctly in opposite directions"),
-        ChecklistItem(title: "Rudders synchronized"),
-        ChecklistItem(title: "Elevator working correctly"),
-        ChecklistItem(title: "Neutral positions aligned"),
-        ChecklistItem(title: "No servo jitters"),
-        ChecklistItem(
-            title:
-                "No voltage drop when all control surfaces moved simultaneously"),
-      ],
-    ),
+  ChecklistSection(
+    title: "PRE - FLIGHT",
+    items: [
+      ChecklistItem(title: "RC Connected"),
+      ChecklistItem(title: "Control Surface Check"),
+      ChecklistItem(title: "Motor Test Check"),
+      ChecklistItem(title: "Propeller Attached and Secured"),
+    ],
+  ),
 
-    ChecklistSection(
-      title: "PROPULSION SYSTEM",
-      items: [
-        ChecklistItem(title: "Both motors spin correctly"),
-        ChecklistItem(title: "Propeller direction correct"),
-        ChecklistItem(title: "ESC calibrated"),
-        ChecklistItem(title: "No abnormal vibration/noise"),
-      ],
-    ),
+  ChecklistSection(
+    title: "FLIGHT",
+    items: [
+      ChecklistItem(title: "Upload Waypoints Check"),
+      ChecklistItem(title: "ARM Check"),
+      ChecklistItem(title: "Auto Check"),
+    ],
+  ),
 
-    ChecklistSection(
-      title: "PAYLOAD SYSTEM",
-      items: [
-        ChecklistItem(title: "Pump motor activates via FC command"),
-        ChecklistItem(title: "Relay functioning correctly"),
-        ChecklistItem(title: "No electrical noise affecting FC"),
-        ChecklistItem(title: "Payload weight secured"),
-      ],
-    ),
 
-    ChecklistSection(
-      title: "FAILSAFES AND SAFETY",
-      items: [
-        ChecklistItem(title: "FTS tested"),
-        ChecklistItem(title: "Kill switch cuts throttle immediately"),
-        ChecklistItem(title: "RTL/Loiter configured"),
-        ChecklistItem(title: "Geofence configured"),
-      ],
-    ),
   ];
 
   int get totalItems {
